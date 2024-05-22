@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  pollist
+//  Pollist
 //
 //  Created by Matheus Jorge on 5/22/24.
 //

@@ -17,13 +17,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		F59FDAA72BFD97DE00136077 /* pollist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pollist.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F59FDAA72BFD97DE00136077 /* Pollist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pollist.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F59FDAAA2BFD97DE00136077 /* PollistApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollistApp.swift; sourceTree = "<group>"; };
 		F59FDAAC2BFD97DE00136077 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		F59FDAAE2BFD97DF00136077 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F59FDAB12BFD97DF00136077 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		F59FDAB92BFD986D00136077 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
-		F59FDABB2BFD987300136077 /* pollist.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = pollist.entitlements; sourceTree = "<group>"; };
+		F59FDABB2BFD987300136077 /* Pollist.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Pollist.entitlements; sourceTree = "<group>"; };
 		F59FDABC2BFD9C0700136077 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		F59FDABD2BFD9DEB00136077 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		F59FDABF2BFDCDB800136077 /* SimpleWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleWebView.swift; sourceTree = "<group>"; };
@@ -44,7 +44,7 @@
 		F59FDA9E2BFD97DE00136077 = {
 			isa = PBXGroup;
 			children = (
-				F59FDAA92BFD97DE00136077 /* pollist */,
+				F59FDAA92BFD97DE00136077 /* Pollist */,
 				F59FDAA82BFD97DE00136077 /* Products */,
 				F59FDAB82BFD986D00136077 /* Frameworks */,
 			);
@@ -53,16 +53,16 @@
 		F59FDAA82BFD97DE00136077 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F59FDAA72BFD97DE00136077 /* pollist.app */,
+				F59FDAA72BFD97DE00136077 /* Pollist.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		F59FDAA92BFD97DE00136077 /* pollist */ = {
+		F59FDAA92BFD97DE00136077 /* Pollist */ = {
 			isa = PBXGroup;
 			children = (
 				F59FDABC2BFD9C0700136077 /* Info.plist */,
-				F59FDABB2BFD987300136077 /* pollist.entitlements */,
+				F59FDABB2BFD987300136077 /* Pollist.entitlements */,
 				F59FDAAA2BFD97DE00136077 /* PollistApp.swift */,
 				F59FDAAC2BFD97DE00136077 /* ContentView.swift */,
 				F59FDABD2BFD9DEB00136077 /* WebView.swift */,
@@ -70,7 +70,7 @@
 				F59FDAAE2BFD97DF00136077 /* Assets.xcassets */,
 				F59FDAB02BFD97DF00136077 /* Preview Content */,
 			);
-			path = pollist;
+			path = Pollist;
 			sourceTree = "<group>";
 		};
 		F59FDAB02BFD97DF00136077 /* Preview Content */ = {
@@ -92,9 +92,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		F59FDAA62BFD97DE00136077 /* pollist */ = {
+		F59FDAA62BFD97DE00136077 /* Pollist */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F59FDAB52BFD97DF00136077 /* Build configuration list for PBXNativeTarget "pollist" */;
+			buildConfigurationList = F59FDAB52BFD97DF00136077 /* Build configuration list for PBXNativeTarget "Pollist" */;
 			buildPhases = (
 				F59FDAA32BFD97DE00136077 /* Sources */,
 				F59FDAA42BFD97DE00136077 /* Frameworks */,
@@ -104,9 +104,9 @@
 			);
 			dependencies = (
 			);
-			name = pollist;
+			name = Pollist;
 			productName = pollist;
-			productReference = F59FDAA72BFD97DE00136077 /* pollist.app */;
+			productReference = F59FDAA72BFD97DE00136077 /* Pollist.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -124,7 +124,7 @@
 					};
 				};
 			};
-			buildConfigurationList = F59FDAA22BFD97DE00136077 /* Build configuration list for PBXProject "pollist" */;
+			buildConfigurationList = F59FDAA22BFD97DE00136077 /* Build configuration list for PBXProject "Pollist" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -137,7 +137,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				F59FDAA62BFD97DE00136077 /* pollist */,
+				F59FDAA62BFD97DE00136077 /* Pollist */,
 			);
 		};
 /* End PBXProject section */
@@ -363,7 +363,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		F59FDAA22BFD97DE00136077 /* Build configuration list for PBXProject "pollist" */ = {
+		F59FDAA22BFD97DE00136077 /* Build configuration list for PBXProject "Pollist" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F59FDAB32BFD97DF00136077 /* Debug */,
@@ -372,7 +372,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F59FDAB52BFD97DF00136077 /* Build configuration list for PBXNativeTarget "pollist" */ = {
+		F59FDAB52BFD97DF00136077 /* Build configuration list for PBXNativeTarget "Pollist" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F59FDAB62BFD97DF00136077 /* Debug */,
