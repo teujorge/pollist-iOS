@@ -7,18 +7,26 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F59FDAAB2BFD97DE00136077 /* pollistApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F59FDAAA2BFD97DE00136077 /* pollistApp.swift */; };
+		F59FDAAB2BFD97DE00136077 /* PollistApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F59FDAAA2BFD97DE00136077 /* PollistApp.swift */; };
 		F59FDAAD2BFD97DE00136077 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F59FDAAC2BFD97DE00136077 /* ContentView.swift */; };
 		F59FDAAF2BFD97DF00136077 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F59FDAAE2BFD97DF00136077 /* Assets.xcassets */; };
 		F59FDAB22BFD97DF00136077 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F59FDAB12BFD97DF00136077 /* Preview Assets.xcassets */; };
+		F59FDABA2BFD986D00136077 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F59FDAB92BFD986D00136077 /* StoreKit.framework */; };
+		F59FDABE2BFD9DEB00136077 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F59FDABD2BFD9DEB00136077 /* WebView.swift */; };
+		F59FDAC02BFDCDB800136077 /* SimpleWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F59FDABF2BFDCDB800136077 /* SimpleWebView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		F59FDAA72BFD97DE00136077 /* pollist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pollist.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		F59FDAAA2BFD97DE00136077 /* pollistApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pollistApp.swift; sourceTree = "<group>"; };
+		F59FDAAA2BFD97DE00136077 /* PollistApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollistApp.swift; sourceTree = "<group>"; };
 		F59FDAAC2BFD97DE00136077 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		F59FDAAE2BFD97DF00136077 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F59FDAB12BFD97DF00136077 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		F59FDAB92BFD986D00136077 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		F59FDABB2BFD987300136077 /* pollist.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = pollist.entitlements; sourceTree = "<group>"; };
+		F59FDABC2BFD9C0700136077 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		F59FDABD2BFD9DEB00136077 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
+		F59FDABF2BFDCDB800136077 /* SimpleWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleWebView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -26,6 +34,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F59FDABA2BFD986D00136077 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -37,6 +46,7 @@
 			children = (
 				F59FDAA92BFD97DE00136077 /* pollist */,
 				F59FDAA82BFD97DE00136077 /* Products */,
+				F59FDAB82BFD986D00136077 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -51,8 +61,12 @@
 		F59FDAA92BFD97DE00136077 /* pollist */ = {
 			isa = PBXGroup;
 			children = (
-				F59FDAAA2BFD97DE00136077 /* pollistApp.swift */,
+				F59FDABC2BFD9C0700136077 /* Info.plist */,
+				F59FDABB2BFD987300136077 /* pollist.entitlements */,
+				F59FDAAA2BFD97DE00136077 /* PollistApp.swift */,
 				F59FDAAC2BFD97DE00136077 /* ContentView.swift */,
+				F59FDABD2BFD9DEB00136077 /* WebView.swift */,
+				F59FDABF2BFDCDB800136077 /* SimpleWebView.swift */,
 				F59FDAAE2BFD97DF00136077 /* Assets.xcassets */,
 				F59FDAB02BFD97DF00136077 /* Preview Content */,
 			);
@@ -65,6 +79,14 @@
 				F59FDAB12BFD97DF00136077 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		F59FDAB82BFD986D00136077 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F59FDAB92BFD986D00136077 /* StoreKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,8 +159,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F59FDABE2BFD9DEB00136077 /* WebView.swift in Sources */,
+				F59FDAC02BFDCDB800136077 /* SimpleWebView.swift in Sources */,
 				F59FDAAD2BFD97DE00136077 /* ContentView.swift in Sources */,
-				F59FDAAB2BFD97DE00136077 /* pollistApp.swift in Sources */,
+				F59FDAAB2BFD97DE00136077 /* PollistApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,22 +293,29 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = pollist/pollist.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"pollist/Preview Content\"";
 				DEVELOPMENT_TEAM = MBM3VV5JVW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = pollist/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Pollist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Pollist uses your camera to take photos that can be used to create image-based polls or update your profile picture, which will be visible to other users.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Pollist uses Face ID for login and payment authorizactions.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mjorge.pollist;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -298,22 +329,29 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = pollist/pollist.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"pollist/Preview Content\"";
 				DEVELOPMENT_TEAM = MBM3VV5JVW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = pollist/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Pollist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Pollist uses your camera to take photos that can be used to create image-based polls or update your profile picture, which will be visible to other users.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Pollist uses Face ID for login and payment authorizactions.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mjorge.pollist;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
