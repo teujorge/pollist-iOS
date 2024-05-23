@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F53BC8172BFE8F570050D9F2 /* StoreKitConfig.storekit in Resources */ = {isa = PBXBuildFile; fileRef = F53BC8162BFE8F570050D9F2 /* StoreKitConfig.storekit */; };
 		F59FDAAB2BFD97DE00136077 /* PollistApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F59FDAAA2BFD97DE00136077 /* PollistApp.swift */; };
 		F59FDAAD2BFD97DE00136077 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F59FDAAC2BFD97DE00136077 /* ContentView.swift */; };
 		F59FDAAF2BFD97DF00136077 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F59FDAAE2BFD97DF00136077 /* Assets.xcassets */; };
@@ -17,6 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F53BC8162BFE8F570050D9F2 /* StoreKitConfig.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = StoreKitConfig.storekit; path = Pollist/StoreKitConfig.storekit; sourceTree = "<group>"; };
 		F59FDAA72BFD97DE00136077 /* Pollist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pollist.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F59FDAAA2BFD97DE00136077 /* PollistApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollistApp.swift; sourceTree = "<group>"; };
 		F59FDAAC2BFD97DE00136077 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -44,6 +46,7 @@
 		F59FDA9E2BFD97DE00136077 = {
 			isa = PBXGroup;
 			children = (
+				F53BC8162BFE8F570050D9F2 /* StoreKitConfig.storekit */,
 				F59FDAA92BFD97DE00136077 /* Pollist */,
 				F59FDAA82BFD97DE00136077 /* Products */,
 				F59FDAB82BFD986D00136077 /* Frameworks */,
@@ -147,6 +150,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F53BC8172BFE8F570050D9F2 /* StoreKitConfig.storekit in Resources */,
 				F59FDAB22BFD97DF00136077 /* Preview Assets.xcassets in Resources */,
 				F59FDAAF2BFD97DF00136077 /* Assets.xcassets in Resources */,
 			);
@@ -307,6 +311,7 @@
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Pollist uses Face ID for login and payment authorizactions.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UIRequiresFullScreen = NO;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -343,6 +348,7 @@
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Pollist uses Face ID for login and payment authorizactions.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UIRequiresFullScreen = NO;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;

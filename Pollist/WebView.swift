@@ -15,9 +15,16 @@ struct WebView: UIViewRepresentable {
     let openWebViewInSheet: (URL) -> Void
     let openSubscriptionSheet: () -> Void
     let openManageSubscriptions: () -> Void
-
+    
     func makeUIView(context: Context) -> WKWebView {
-        let webView = WKWebView()
+        // Setup
+        let config = WKWebViewConfiguration()
+        let userContentController = WKUserContentController()
+        
+        userContentController.add(context.coordinator, name: "userListener")
+        config.userContentController = userContentController
+        
+        let webView = WKWebView(frame: .zero, configuration: config)
         
         // Set background color
         webView.isOpaque = false
@@ -39,33 +46,34 @@ struct WebView: UIViewRepresentable {
         context.coordinator.refreshControl = refreshControl
         
         // Set user agent for clerk auth
-        webView.customUserAgent = "Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Mobile Safari/537.36"
+        webView.customUserAgent = "AppleWebKit/537.36 Mobile Safari/537.36"
         
         context.coordinator.webView = webView
         
         return webView
     }
-
+    
     func updateUIView(_ uiView: WKWebView, context: Context) {
         DispatchQueue.main.async {
             let request = URLRequest(url: url)
             uiView.load(request)
         }
     }
-
+    
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
-
-    class Coordinator: NSObject, WKNavigationDelegate {
+    
+    class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
+        
         var parent: WebView
         var webView: WKWebView?
         var refreshControl: UIRefreshControl?
-
+        
         init(_ parent: WebView) {
             self.parent = parent
         }
-
+        
         // Handle webview navigation finish
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
             refreshControl?.endRefreshing()
@@ -77,44 +85,61 @@ struct WebView: UIViewRepresentable {
                      decidePolicyFor navigationAction: WKNavigationAction,
                      decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
             
-            // Ensure that there is no target frame (indicating it might be an external link)
-            guard navigationAction.targetFrame == nil else {
-                decisionHandler(.allow)
-                return
-            }
-
+            print("Handle navigation action")
+            
+            // Ensure that the URL is valid
             guard let url = navigationAction.request.url,
                   let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
                   let host = components.host else {
                 decisionHandler(.allow)
                 return
             }
-
-            NSLog("Host: \(host)")
-
+            
+            // Ensure that there is no target frame (indicating it might be an internal link)
+            guard navigationAction.targetFrame == nil else {
+                decisionHandler(.allow)
+                return
+            }
+            
+            print("Host: \(host)")
+            
             if host == "pollist.org" && components.queryItems?.contains(where: { $0.name == "target" && $0.value == "_blank" }) == true {
-                NSLog("Open in default browser")
+                print("Open in default browser")
                 UIApplication.shared.open(url)
             } else if host == "twitter.com" || host == "api.whatsapp.com" {
-                NSLog("Open in default browser")
+                print("Open in default browser")
                 UIApplication.shared.open(url)
             } else if host == "pollist.org" && url.path == "/subscribe" {
-                NSLog("Open purchase subscription")
-                let userId = components.queryItems?.first(where: { $0.name == "client_reference_id" })?.value
-                let productId = components.queryItems?.first(where: { $0.name == "product_id" })?.value
-                print("User ID: \(userId ?? "nil")")
-                print("Product ID: \(productId ?? "nil")")
+                print("Open purchase subscription")
+                let userID = components.queryItems?.first(where: { $0.name == "client_reference_id" })?.value
+                let productID = components.queryItems?.first(where: { $0.name == "product_id" })?.value
+                print("User ID: \(userID ?? "nil")")
+                print("Product ID: \(productID ?? "nil")")
+                
+                if userID != nil && userID != WebViewManager.shared.userID { WebViewManager.shared.userID = userID
+                }
                 parent.openSubscriptionSheet()
             } else if host == "pollist.org" && url.path == "/subscription" {
-                NSLog("Open manage subscription")
+                print("Open manage subscription")
                 parent.openManageSubscriptions()
             } else {
-                NSLog("Open link in bottom sheet")
+                print("Open link in bottom sheet")
                 parent.openWebViewInSheet(url)
             }
-
+            
             // Cancel the default handling of this URL to enforce our custom behavior
             decisionHandler(.cancel)
+        }
+        
+        func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+            if message.name == "userListener", let messageBody = message.body as? String {
+                print("userListener message from web: \(messageBody)")
+                if messageBody.isEmpty {
+                    WebViewManager.shared.userID = nil
+                } else {
+                    WebViewManager.shared.userID = messageBody
+                }
+            }
         }
         
         @objc func refreshWebView() {

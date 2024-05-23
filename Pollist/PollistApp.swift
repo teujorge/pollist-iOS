@@ -15,6 +15,7 @@ struct PollistApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .preferredColorScheme(.dark)
                 .onOpenURL { url in
                     handleUniversalLink(url)
                 }
@@ -26,16 +27,33 @@ struct PollistApp: App {
     }
     
     private func handleUniversalLink(_ url: URL) {
-        LinkManager.shared.universalURL = url
+        WebViewManager.shared.universalURL = url
         NotificationCenter.default.post(name: NSNotification.Name("UniversalLinkReceived"), object: nil)
     }
 }
 
-class LinkManager {
-    static let shared = LinkManager()
+class WebViewManager {
+    static let shared = WebViewManager()
+    
+    // Links
     var universalURL: URL?
     var webViewURL = URL(string: "https://pollist.org")!
     var webViewSheetURL = URL(string: "https://pollist.org")!
+    
+    // Properties
+    var userID: String? {
+        didSet {
+            if userID != UserDefaults.standard.string(forKey: "userID") {
+                UserDefaults.standard.set(userID, forKey: "userID")
+                print("User ID updated, setting UserDefaults: \(userID ?? "nil")")
+            }
+        }
+    }
+    
+    init() {
+        userID = UserDefaults.standard.string(forKey: "userID")
+        print("User ID from UserDefaults: \(userID ?? "nil")")
+    }
 }
 
 

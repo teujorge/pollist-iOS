@@ -8,6 +8,7 @@
 import SwiftUI
 import WebKit
 import StoreKit
+import Foundation
 
 struct ContentView: View {
     
@@ -21,7 +22,7 @@ struct ContentView: View {
         ZStack(alignment: .center) {
             // WebView
             WebView(
-                url: LinkManager.shared.webViewURL,
+                url: WebViewManager.shared.webViewURL,
                 markWebViewAsLoaded: markWebViewAsLoaded,
                 openWebViewInSheet: openWebViewInSheet,
                 openSubscriptionSheet: openSubscriptionSheet,
@@ -36,7 +37,6 @@ struct ContentView: View {
                     .animation(.easeInOut, value: hasWebViewLoaded)
             }
         }
-        
         // Load webview content
         .onAppear {
             setupNotificationObservers()
@@ -55,23 +55,63 @@ struct ContentView: View {
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("UniversalLinkReceived"))) { _ in
             loadWebViewContent()
         }
-        // Sheets
+        // MARK: Sheets
         .sheet(isPresented: $showSubscriptionSheet) {
             SubscriptionStoreView(groupID: subGroupID)
                 .subscriptionStorePickerItemBackground(.ultraThinMaterial)
         }
         .sheet(isPresented: $showWebViewInSheet) {
-            SimpleWebView(url: LinkManager.shared.webViewSheetURL)
+            SimpleWebView(url: WebViewManager.shared.webViewSheetURL)
         }
-//        .id(webViewSheetURL)
-        // App Store
+        // MARK: SwiftUI App Store APIs
         .onInAppPurchaseCompletion { product, result in
             switch result {
             case .success:
-                print("ProfileView: Purchase completed: \(product.displayName)")
+                print("onInAppPurchaseCompletion: Purchase completed: \(product.displayName)")
                 showSubscriptionSheet = false
+                do {
+                    let originalTransactionId = try await product.latestTransaction?.payloadValue.originalID
+                    print("onInAppPurchaseCompletion: Original transaction id: \(String(describing: originalTransactionId))")
+                    
+                    if let originalTransactionId = originalTransactionId {
+                        await postSubscriptionStatuses([
+                            AppStorePayload(
+                                productID: product.id,
+                                originalID: originalTransactionId,
+                                eventType: Product.SubscriptionInfo.RenewalState.subscribed,
+                                transaction: product.latestTransaction
+                            )]
+                        )
+                    }
+                    else {
+                        print("onInAppPurchaseCompletion: Original transaction id is nil, not posting subscription status")
+                    }
+                }
+                catch {
+                    print("onInAppPurchaseCompletion: Error getting original transaction id")
+                }
+                
             case .failure(let error):
-                print("ProfileView: Purchase failed: \(error)")
+                print("onInAppPurchaseCompletion: Purchase failed: \(error)")
+            }
+        }
+        .subscriptionStatusTask(for: subGroupID) { taskState in
+            guard let statuses = taskState.value else { return }
+            Task {
+                let payloads = try statuses.compactMap { status -> AppStorePayload? in
+                    
+                    let productID = try status.transaction.payloadValue.productID
+                    let originalID = try status.transaction.payloadValue.originalID
+                    
+                    return AppStorePayload(
+                        productID: productID,
+                        originalID: originalID,
+                        eventType: status.state,
+                        transaction: status.transaction
+                    )
+                }
+                
+                await postSubscriptionStatuses(payloads)
             }
         }
         
@@ -89,16 +129,19 @@ struct ContentView: View {
         NotificationCenter.default.addObserver(forName: NSNotification.Name("UserDeniedNotifications"), object: nil, queue: .main) { _ in
             self.loadWebViewContent()
         }
+        NotificationCenter.default.addObserver(forName: NSNotification.Name("UniversalLinkReceived"), object: nil, queue: .main) { _ in
+            self.loadWebViewContent()
+        }
     }
     
     private func loadWebViewContent() {
         
-        if hasWebViewLoaded && LinkManager.shared.universalURL == nil {
-            NSLog("Webview already loaded")
+        if hasWebViewLoaded && WebViewManager.shared.universalURL == nil {
+            print("Webview already loaded")
             return
         }
         
-        var urlComponents = URLComponents(url: LinkManager.shared.universalURL ?? LinkManager.shared.webViewURL, resolvingAgainstBaseURL: false)
+        var urlComponents = URLComponents(url: WebViewManager.shared.universalURL ?? WebViewManager.shared.webViewURL, resolvingAgainstBaseURL: false)
         
         let currentQueryItems = urlComponents?.queryItems ?? []
         
@@ -112,9 +155,119 @@ struct ContentView: View {
         }
         
         if let url = urlComponents?.url {
-            LinkManager.shared.webViewURL = url
+            WebViewManager.shared.webViewURL = url
         }
         
+    }
+    
+    // MARK: App Store methods
+    
+    private func postSubscriptionStatuses(_ payloads: [AppStorePayload]) async {
+        
+        print("post request -> https://pollist.org/api/subscription/device")
+        payloads.forEach { payload in
+            print("Product ID: \(payload.productID)")
+            print("Original Transaction ID: \(payload.originalID)")
+            print("Event Type: \(payload.eventType)")
+        }
+        
+        guard let url = URL(string: "https://pollist.org/api/subscription/device") else {
+            print("Invalid URL")
+            return
+        }
+        
+        guard WebViewManager.shared.userID != nil else {
+            print("userID is nil")
+            return
+        }
+        
+        // Loop through statuses
+        for payload in payloads {
+            // Get details
+            print("Product ID: \(payload.productID)")
+            print("Original Transaction ID: \(payload.originalID)")
+            
+            // Get event type
+            var eventType: String?
+            
+            switch payload.eventType {
+            case .subscribed:
+                print("subscribed")
+                eventType = "subscribed"
+            case .expired:
+                print("expired")
+                eventType = "expired"
+            case .inBillingRetryPeriod:
+                print("inBillingRetryPeriod")
+                eventType = "inBillingRetryPeriod"
+            case .inGracePeriod:
+                print("inGracePeriod")
+                eventType = "inGracePeriod"
+            case .revoked:
+                print("revoked")
+                eventType = "revoked"
+            default:
+                print("default")
+            }
+            
+            if eventType == nil {
+                print("eventType is nil")
+                continue
+            }
+            
+            // Prepare request
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            
+            let body: [String: Any] = [
+                "userId": WebViewManager.shared.userID!,
+                "originalTransactionId": String(payload.originalID),
+                "eventType": eventType!,
+                "key": ""
+            ]
+            
+            do {
+                request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [])
+            } catch {
+                print("Failed to encode body: \(error)")
+                continue
+            }
+            
+            // Attempt to post subscription, retry once if failed
+            for attempt in 1...2 {
+                let result = await attemptPostRequest(with: request)
+                switch result {
+                case .success:
+                    print("Subscription successfully posted")
+                    //                    await payload.transaction.finish()
+                    continue  // Exit function after success
+                case .failure(let error):
+                    print("Attempt \(attempt) failed: \(error)")
+                    if attempt == 2 {  // If the second attempt also fails
+                        print("Both attempts to post subscription have failed.")
+                    }
+                }
+            }
+        }
+        
+    }
+    
+    private func attemptPostRequest(with request: URLRequest) async -> Result<Void, Error> {
+        await withCheckedContinuation { continuation in
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                if let error = error {
+                    continuation.resume(returning: .failure(error))
+                    return
+                }
+                guard let httpResponse = response as? HTTPURLResponse,
+                      (200...299).contains(httpResponse.statusCode) else {
+                    continuation.resume(returning: .failure(URLError(.badServerResponse)))
+                    return
+                }
+                continuation.resume(returning: .success(()))
+            }.resume()
+        }
     }
     
     // MARK: Delegate methods
@@ -122,7 +275,7 @@ struct ContentView: View {
     private func markWebViewAsLoaded() {
         DispatchQueue.main.async {
             withAnimation { hasWebViewLoaded = true }
-            LinkManager.shared.universalURL = nil
+            WebViewManager.shared.universalURL = nil
         }
     }
     
@@ -148,14 +301,21 @@ struct ContentView: View {
     private func openWebViewInSheet(_ url: URL) {
         DispatchQueue.main.async {
             print("Opening webview in sheet: \(url)")
-            LinkManager.shared.webViewSheetURL = url
+            WebViewManager.shared.webViewSheetURL = url
             showWebViewInSheet = true
         }
     }
     
 }
 
-let subGroupID = "123"
+let subGroupID = "21491427"
+
+struct AppStorePayload {
+    var productID: String
+    var originalID: UInt64
+    var eventType: Product.SubscriptionInfo.RenewalState
+    var transaction: VerificationResult<StoreKit.Transaction>?
+}
 
 #Preview {
     ContentView()
