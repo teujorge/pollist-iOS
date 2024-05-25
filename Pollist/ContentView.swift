@@ -30,6 +30,8 @@ struct ContentView: View {
             )
             // Loading View
             if !hasWebViewLoaded {
+                Color(.black)
+                    .animation(.easeInOut, value: hasWebViewLoaded)
                 Image("icon")
                     .resizable()
                     .scaledToFit()
@@ -82,6 +84,7 @@ struct ContentView: View {
                                 transaction: product.latestTransaction
                             )]
                         )
+                        hasWebViewLoaded = false
                     }
                     else {
                         print("onInAppPurchaseCompletion: Original transaction id is nil, not posting subscription status")
