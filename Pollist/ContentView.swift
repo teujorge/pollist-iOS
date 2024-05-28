@@ -73,9 +73,15 @@ struct ContentView: View {
                 showSubscriptionSheet = false
                 do {
                     let originalTransactionId = try await product.latestTransaction?.payloadValue.originalID
-                    print("onInAppPurchaseCompletion: Original transaction id: \(String(describing: originalTransactionId))")
+                    print("onInAppPurchaseCompletion:")
+                    print("User id: \(String(describing: WebViewManager.shared.userID))")
+                    print("Original transaction id: \(String(describing: originalTransactionId))")
                     
                     if let originalTransactionId = originalTransactionId {
+                        // Save subscribed user id
+                        UserDefaults.standard.set(WebViewManager.shared.userID, forKey: "subscribedUserID")
+                        
+                        // Post subscription status
                         await postSubscriptionStatuses([
                             AppStorePayload(
                                 productID: product.id,
@@ -84,6 +90,8 @@ struct ContentView: View {
                                 transaction: product.latestTransaction
                             )]
                         )
+                        
+                        // Reset webview
                         hasWebViewLoaded = false
                     }
                     else {
@@ -174,13 +182,22 @@ struct ContentView: View {
             print("Event Type: \(payload.eventType)")
         }
         
+        // Ensure valid URL
         guard let url = URL(string: "https://pollist.org/api/subscription/device") else {
             print("Invalid URL")
             return
         }
         
+        // Ensure user signed in
         guard WebViewManager.shared.userID != nil else {
             print("userID is nil")
+            return
+        }
+        
+        // Ensure signed in user is the subscribed user, allow null in case of app reinstall or other edge cases
+        let subscribedUserID = UserDefaults.standard.string(forKey: "subscribedUserID")
+        guard subscribedUserID == nil || subscribedUserID == WebViewManager.shared.userID else {
+            print("User is not the subscribed user")
             return
         }
         
@@ -227,7 +244,7 @@ struct ContentView: View {
                 "userId": WebViewManager.shared.userID!,
                 "originalTransactionId": String(payload.originalID),
                 "eventType": eventType!,
-                "key": ""
+                "key": apiKey,
             ]
             
             do {
@@ -241,10 +258,28 @@ struct ContentView: View {
             for attempt in 1...2 {
                 let result = await attemptPostRequest(with: request)
                 switch result {
-                case .success:
+                case .success(let data):
                     print("Subscription successfully posted")
-                    //                    await payload.transaction.finish()
-                    continue  // Exit function after success
+                    do {
+                        // Decode the JSON data
+                        let decoder = JSONDecoder()
+                        let response = try decoder.decode(SubscriptionResponse.self, from: data)
+                        
+                        // Check subscription state and update UserDefaults
+                        if response.state == "subscribed" {
+                            UserDefaults.standard.set(response.userId, forKey: "subscribedUserID")
+                            UserDefaults.standard.set(response.username, forKey: "subscribedUsername")
+                            print("Saved user id \(String(describing: response.userId)) subscribed successfully.")
+                        } else if response.state == "unsubscribed" {
+                            UserDefaults.standard.removeObject(forKey: "subscribedUserID")
+                            UserDefaults.standard.removeObject(forKey: "subscribedUsername")
+                            print("Saved user id \(String(describing: response.userId)) unsubscribed successfully.")
+                        }
+                        
+                        return  // Exit function after handling the response successfully
+                    } catch {
+                        print("JSON decoding error: \(error)")
+                    }
                 case .failure(let error):
                     print("Attempt \(attempt) failed: \(error)")
                     if attempt == 2 {  // If the second attempt also fails
@@ -252,11 +287,12 @@ struct ContentView: View {
                     }
                 }
             }
+            
         }
         
     }
     
-    private func attemptPostRequest(with request: URLRequest) async -> Result<Void, Error> {
+    private func attemptPostRequest(with request: URLRequest) async -> Result<Data, Error> {
         await withCheckedContinuation { continuation in
             URLSession.shared.dataTask(with: request) { data, response, error in
                 if let error = error {
@@ -264,11 +300,12 @@ struct ContentView: View {
                     return
                 }
                 guard let httpResponse = response as? HTTPURLResponse,
-                      (200...299).contains(httpResponse.statusCode) else {
+                      (200...299).contains(httpResponse.statusCode),
+                      let data = data else {
                     continuation.resume(returning: .failure(URLError(.badServerResponse)))
                     return
                 }
-                continuation.resume(returning: .success(()))
+                continuation.resume(returning: .success(data))
             }.resume()
         }
     }
@@ -295,7 +332,6 @@ struct ContentView: View {
             do {
                 try await AppStore.showManageSubscriptions(in: windowScene, subscriptionGroupID: subGroupID)
             } catch {
-                // showSubscriptionSheet = true
                 print("Error showing manage subscriptions: \(error)")
             }
         }
@@ -318,6 +354,12 @@ struct AppStorePayload {
     var originalID: UInt64
     var eventType: Product.SubscriptionInfo.RenewalState
     var transaction: VerificationResult<StoreKit.Transaction>?
+}
+
+struct SubscriptionResponse: Codable {
+    var state: String?
+    var userId: String?
+    var username: String?
 }
 
 #Preview {

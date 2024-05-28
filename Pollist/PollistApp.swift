@@ -20,7 +20,6 @@ struct PollistApp: App {
                     handleUniversalLink(url)
                 }
                 .onAppear {
-                    UIApplication.shared.registerForRemoteNotifications()
                     UNUserNotificationCenter.current().delegate = appDelegate
                 }
         }

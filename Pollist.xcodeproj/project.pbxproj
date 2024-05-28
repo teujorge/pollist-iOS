@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F53BC8172BFE8F570050D9F2 /* StoreKitConfig.storekit in Resources */ = {isa = PBXBuildFile; fileRef = F53BC8162BFE8F570050D9F2 /* StoreKitConfig.storekit */; };
+		F5858F292C05140600120668 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5858F282C05140600120668 /* Constants.swift */; };
 		F59FDAAB2BFD97DE00136077 /* PollistApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F59FDAAA2BFD97DE00136077 /* PollistApp.swift */; };
 		F59FDAAD2BFD97DE00136077 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F59FDAAC2BFD97DE00136077 /* ContentView.swift */; };
 		F59FDAAF2BFD97DF00136077 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F59FDAAE2BFD97DF00136077 /* Assets.xcassets */; };
@@ -19,6 +20,7 @@
 
 /* Begin PBXFileReference section */
 		F53BC8162BFE8F570050D9F2 /* StoreKitConfig.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = StoreKitConfig.storekit; path = Pollist/StoreKitConfig.storekit; sourceTree = "<group>"; };
+		F5858F282C05140600120668 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		F59FDAA72BFD97DE00136077 /* Pollist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pollist.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F59FDAAA2BFD97DE00136077 /* PollistApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollistApp.swift; sourceTree = "<group>"; };
 		F59FDAAC2BFD97DE00136077 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -70,6 +72,7 @@
 				F59FDAAC2BFD97DE00136077 /* ContentView.swift */,
 				F59FDABD2BFD9DEB00136077 /* WebView.swift */,
 				F59FDABF2BFDCDB800136077 /* SimpleWebView.swift */,
+				F5858F282C05140600120668 /* Constants.swift */,
 				F59FDAAE2BFD97DF00136077 /* Assets.xcassets */,
 				F59FDAB02BFD97DF00136077 /* Preview Content */,
 			);
@@ -163,6 +166,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F5858F292C05140600120668 /* Constants.swift in Sources */,
 				F59FDABE2BFD9DEB00136077 /* WebView.swift in Sources */,
 				F59FDAC02BFDCDB800136077 /* SimpleWebView.swift in Sources */,
 				F59FDAAD2BFD97DE00136077 /* ContentView.swift in Sources */,
@@ -299,7 +303,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = pollist/pollist.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"pollist/Preview Content\"";
 				DEVELOPMENT_TEAM = MBM3VV5JVW;
 				ENABLE_PREVIEWS = YES;
@@ -320,7 +324,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.5;
+				MARKETING_VERSION = 0.6;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mjorge.pollist;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -336,7 +340,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = pollist/pollist.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"pollist/Preview Content\"";
 				DEVELOPMENT_TEAM = MBM3VV5JVW;
 				ENABLE_PREVIEWS = YES;
@@ -357,7 +361,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.5;
+				MARKETING_VERSION = 0.6;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mjorge.pollist;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

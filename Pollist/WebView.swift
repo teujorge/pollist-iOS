@@ -46,7 +46,7 @@ struct WebView: UIViewRepresentable {
         context.coordinator.refreshControl = refreshControl
         
         // Set user agent for clerk auth
-        webView.customUserAgent = "AppleWebKit/537.36 Mobile Safari/537.36"
+        webView.customUserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4.1 Mobile/15E148 Safari/604.1"
         
         context.coordinator.webView = webView
         
@@ -59,6 +59,56 @@ struct WebView: UIViewRepresentable {
             uiView.load(request)
         }
     }
+    
+    private func cleanWebViewData() {
+        let websiteDataTypes = Set([WKWebsiteDataTypeCookies])
+        let dataStore = WKWebsiteDataStore.default()
+        
+        dataStore.fetchDataRecords(ofTypes: websiteDataTypes) { records in
+            // Filter out cookies to delete (containing "google" but not "accounts.google.com")
+            let recordsToDelete = records.filter { record in
+                record.displayName.contains("google") && !record.displayName.contains("accounts.google.com")
+            }
+            
+            // Remove the filtered cookies
+            dataStore.removeData(ofTypes: websiteDataTypes, for: recordsToDelete) {
+                recordsToDelete.forEach { record in
+                    print("Cleared cookies for: \(record.displayName)")
+                }
+            }
+        }
+    }
+    
+    private func showAlertIfNeeded(completion: @escaping () -> Void) {
+        guard let userID = WebViewManager.shared.userID,
+              let savedUserID = UserDefaults.standard.string(forKey: "subscribedUserID"),
+              userID != savedUserID else {
+            completion()  // Perform the completion action if no alert is needed
+            return
+        }
+        
+        let savedUsername = UserDefaults.standard.string(forKey: "subscribedUsername")
+        var message: String
+        
+        if savedUsername == nil {
+            message = "This Apple ID has already subscribed through another account."
+        } else {
+            message = "This Apple ID has already subscribed through the account '\(savedUsername!)'."
+        }
+        
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Subscription Alert", message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
+                completion()  // Perform the completion action after alert dismissal
+            })
+            
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let rootViewController = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController {
+                rootViewController.present(alert, animated: true, completion: nil)
+            }
+        }
+    }
+    
     
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
@@ -116,12 +166,17 @@ struct WebView: UIViewRepresentable {
                 print("User ID: \(userID ?? "nil")")
                 print("Product ID: \(productID ?? "nil")")
                 
-                if userID != nil && userID != WebViewManager.shared.userID { WebViewManager.shared.userID = userID
+                if userID != nil && userID != WebViewManager.shared.userID {
+                    WebViewManager.shared.userID = userID
                 }
-                parent.openSubscriptionSheet()
+                parent.showAlertIfNeeded() {
+                    self.parent.openSubscriptionSheet()
+                }
             } else if host == "pollist.org" && url.path == "/subscription" {
                 print("Open manage subscription")
-                parent.openManageSubscriptions()
+                parent.showAlertIfNeeded() {
+                    self.parent.openManageSubscriptions()
+                }
             } else {
                 print("Open link in bottom sheet")
                 parent.openWebViewInSheet(url)
@@ -135,6 +190,7 @@ struct WebView: UIViewRepresentable {
             if message.name == "userListener", let messageBody = message.body as? String {
                 print("userListener message from web: \(messageBody)")
                 if messageBody.isEmpty {
+                    parent.cleanWebViewData()
                     WebViewManager.shared.userID = nil
                 } else {
                     WebViewManager.shared.userID = messageBody
