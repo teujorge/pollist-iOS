@@ -13,8 +13,15 @@ import Foundation
 struct ContentView: View {
     
     @State private var hasWebViewLoaded = false
-    @State private var showWebViewInSheet = false
-    @State private var showSubscriptionSheet = false
+    @State private var activeSheet: ActiveSheet?
+    @State private var autoShowSubsSheetFromWebViewInSheet = false
+    
+    enum ActiveSheet: Identifiable {
+        case subscription, simpleWebView
+        var id: Int {
+            hashValue
+        }
+    }
     
     // MARK: Body
     
@@ -58,19 +65,74 @@ struct ContentView: View {
             loadWebViewContent()
         }
         // MARK: Sheets
-        .sheet(isPresented: $showSubscriptionSheet) {
-            SubscriptionStoreView(groupID: subGroupID)
+        .sheet(item: $activeSheet, onDismiss: {
+            if activeSheet == nil && autoShowSubsSheetFromWebViewInSheet {
+                activeSheet = .subscription
+                autoShowSubsSheetFromWebViewInSheet = false
+            }
+        }) { item in
+            switch item {
+            case .subscription:
+                SubscriptionStoreView(groupID: subGroupID) {
+                    VStack {
+                        Spacer()
+                        
+                        Image("icon")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 100, height: 100)
+                        
+                        Spacer()
+                        
+                        HStack {
+                            Button("Terms of Service") {
+                                DispatchQueue.main.async {
+                                    autoShowSubsSheetFromWebViewInSheet = true
+                                    WebViewManager.shared.webViewSheetURL = URL(string: "https://pollist.org/tos")!
+                                    activeSheet = .simpleWebView
+                                }
+                            }
+                            .padding(0)
+                            .font(.caption)
+                            .buttonStyle(.plain)
+                            .foregroundColor(.accentColor)
+                            
+                            Text("and")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                            
+                            Button("Privacy Policy") {
+                                DispatchQueue.main.async {
+                                    autoShowSubsSheetFromWebViewInSheet = true
+                                    WebViewManager.shared.webViewSheetURL = URL(string: "https://pollist.org/privacy")!
+                                    activeSheet = .simpleWebView
+                                }
+                            }
+                            .padding(0)
+                            .font(.caption)
+                            .buttonStyle(.plain)
+                            .foregroundColor(.accentColor)
+                        }
+                    }
+                }
+                .subscriptionStoreControlStyle(.prominentPicker)
                 .subscriptionStorePickerItemBackground(.ultraThinMaterial)
-        }
-        .sheet(isPresented: $showWebViewInSheet) {
-            SimpleWebView(url: WebViewManager.shared.webViewSheetURL)
+            case .simpleWebView:
+                WebView(
+                    url: WebViewManager.shared.webViewSheetURL,
+                    markWebViewAsLoaded: markWebViewAsLoaded,
+                    openWebViewInSheet: openWebViewInSheet,
+                    openSubscriptionSheet: openSubscriptionSheet,
+                    openManageSubscriptions: openManageSubscriptions
+                )
+            }
         }
         // MARK: SwiftUI App Store APIs
         .onInAppPurchaseCompletion { product, result in
             switch result {
             case .success:
                 print("onInAppPurchaseCompletion: Purchase completed: \(product.displayName)")
-                showSubscriptionSheet = false
+                activeSheet = .subscription
                 do {
                     let originalTransactionId = try await product.latestTransaction?.payloadValue.originalID
                     print("onInAppPurchaseCompletion:")
@@ -321,7 +383,7 @@ struct ContentView: View {
     
     private func openSubscriptionSheet() {
         DispatchQueue.main.async {
-            showSubscriptionSheet = true
+            activeSheet = .subscription
         }
     }
     
@@ -341,7 +403,7 @@ struct ContentView: View {
         DispatchQueue.main.async {
             print("Opening webview in sheet: \(url)")
             WebViewManager.shared.webViewSheetURL = url
-            showWebViewInSheet = true
+            activeSheet = .simpleWebView
         }
     }
     
