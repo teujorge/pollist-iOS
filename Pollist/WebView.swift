@@ -81,13 +81,13 @@ struct WebView: UIViewRepresentable {
     
     private func showAlertIfNeeded(completion: @escaping () -> Void) {
         guard let userID = WebViewManager.shared.userID,
-              let savedUserID = UserDefaults.standard.string(forKey: "subscribedUserID"),
+              let savedUserID = UserDefaults.standard.string(forKey: .subscribedUserID),
               userID != savedUserID else {
             completion()  // Perform the completion action if no alert is needed
             return
         }
         
-        let savedUsername = UserDefaults.standard.string(forKey: "subscribedUsername")
+        let savedUsername = UserDefaults.standard.string(forKey: .subscribedUsername)
         var message: String
         
         if savedUsername == nil {

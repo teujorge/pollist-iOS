@@ -79,7 +79,7 @@ struct ContentView: View {
                     
                     if let originalTransactionId = originalTransactionId {
                         // Save subscribed user id
-                        UserDefaults.standard.set(WebViewManager.shared.userID, forKey: "subscribedUserID")
+                        UserDefaults.standard.set(WebViewManager.shared.userID, forKey: .subscribedUserID)
                         
                         // Post subscription status
                         await postSubscriptionStatuses([
@@ -158,7 +158,7 @@ struct ContentView: View {
         
         let queryItemSource = URLQueryItem(name: "source", value: "iosWebView")
         
-        if let deviceToken = UserDefaults.standard.string(forKey: "deviceToken") {
+        if let deviceToken = UserDefaults.standard.string(forKey: .deviceToken) {
             let queryItemDeviceToken = URLQueryItem(name: "deviceToken", value: deviceToken)
             urlComponents?.queryItems = currentQueryItems + [queryItemSource, queryItemDeviceToken]
         } else {
@@ -195,7 +195,7 @@ struct ContentView: View {
         }
         
         // Ensure signed in user is the subscribed user, allow null in case of app reinstall or other edge cases
-        let subscribedUserID = UserDefaults.standard.string(forKey: "subscribedUserID")
+        let subscribedUserID = UserDefaults.standard.string(forKey: .subscribedUserID)
         guard subscribedUserID == nil || subscribedUserID == WebViewManager.shared.userID else {
             print("User is not the subscribed user")
             return
@@ -267,12 +267,12 @@ struct ContentView: View {
                         
                         // Check subscription state and update UserDefaults
                         if response.state == "subscribed" {
-                            UserDefaults.standard.set(response.userId, forKey: "subscribedUserID")
-                            UserDefaults.standard.set(response.username, forKey: "subscribedUsername")
+                            UserDefaults.standard.set(response.userId, forKey: .subscribedUserID)
+                            UserDefaults.standard.set(response.username, forKey: .subscribedUsername)
                             print("Saved user id \(String(describing: response.userId)) subscribed successfully.")
                         } else if response.state == "unsubscribed" {
-                            UserDefaults.standard.removeObject(forKey: "subscribedUserID")
-                            UserDefaults.standard.removeObject(forKey: "subscribedUsername")
+                            UserDefaults.standard.removeObject(forKey: .subscribedUserID)
+                            UserDefaults.standard.removeObject(forKey: .subscribedUsername)
                             print("Saved user id \(String(describing: response.userId)) unsubscribed successfully.")
                         }
                         
@@ -346,8 +346,6 @@ struct ContentView: View {
     }
     
 }
-
-let subGroupID = "21491427"
 
 struct AppStorePayload {
     var productID: String

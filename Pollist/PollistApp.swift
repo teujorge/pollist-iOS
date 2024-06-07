@@ -42,15 +42,15 @@ class WebViewManager {
     // Properties
     var userID: String? {
         didSet {
-            if userID != UserDefaults.standard.string(forKey: "userID") {
-                UserDefaults.standard.set(userID, forKey: "userID")
+            if userID != UserDefaults.standard.string(forKey: .userID) {
+                UserDefaults.standard.set(userID, forKey: .userID)
                 print("User ID updated, setting UserDefaults: \(userID ?? "nil")")
             }
         }
     }
     
     init() {
-        userID = UserDefaults.standard.string(forKey: "userID")
+        userID = UserDefaults.standard.string(forKey: .userID)
         print("User ID from UserDefaults: \(userID ?? "nil")")
     }
 }
@@ -65,7 +65,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         let tokenParts = deviceToken.map { String(format: "%02.2hhx", $0) }
         let token = tokenParts.joined()
-        UserDefaults.standard.set(token, forKey: "deviceToken")
+        UserDefaults.standard.set(token, forKey: .deviceToken)
         NotificationCenter.default.post(name: NSNotification.Name("DeviceTokenUpdated"), object: nil)
     }
     
