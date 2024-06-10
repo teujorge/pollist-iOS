@@ -115,6 +115,7 @@ struct ContentView: View {
                         }
                     }
                 }
+                .storeButton(.visible, for: .restorePurchases)
                 .subscriptionStoreControlStyle(.prominentPicker)
                 .subscriptionStorePickerItemBackground(.ultraThinMaterial)
             case .simpleWebView:
