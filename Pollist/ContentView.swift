@@ -298,6 +298,12 @@ struct ContentView: View {
                 continue
             }
             
+            // Ignore, if we are attempting to subscribe the already subscribed user
+             if eventType == "subscribed" && subscribedUserID == WebViewManager.shared.userID {
+                 print("User is already subscribed")
+                 continue
+             }
+            
             // Prepare request
             var request = URLRequest(url: url)
             request.httpMethod = "POST"
