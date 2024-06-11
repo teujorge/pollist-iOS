@@ -298,6 +298,19 @@ struct ContentView: View {
                 continue
             }
             
+            // Ignore, if we are attempting to subscribe the already subscribed user
+             if eventType == "subscribed" && subscribedUserID == WebViewManager.shared.userID {
+                 print("User is already subscribed")
+                 continue
+             }
+            
+            if eventType == "expired" || eventType == "revoked" {
+                if subscribedUserID == nil {
+                    print("User is already non-subscribed")
+                    continue
+                }
+            }
+            
             // Prepare request
             var request = URLRequest(url: url)
             request.httpMethod = "POST"
@@ -312,6 +325,7 @@ struct ContentView: View {
             
             do {
                 request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [])
+                print(" --> post request created")
             } catch {
                 print("Failed to encode body: \(error)")
                 continue
