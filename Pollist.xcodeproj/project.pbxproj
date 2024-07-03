@@ -16,6 +16,8 @@
 		F59FDABA2BFD986D00136077 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F59FDAB92BFD986D00136077 /* StoreKit.framework */; };
 		F59FDABE2BFD9DEB00136077 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F59FDABD2BFD9DEB00136077 /* WebView.swift */; };
 		F59FDAC02BFDCDB800136077 /* SimpleWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F59FDABF2BFDCDB800136077 /* SimpleWebView.swift */; };
+		F5A833052C1E2DD500BDDFF0 /* CookieManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A833042C1E2DD500BDDFF0 /* CookieManager.swift */; };
+		F5A833072C1E2E6D00BDDFF0 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A833062C1E2E6D00BDDFF0 /* Coordinator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +33,8 @@
 		F59FDABC2BFD9C0700136077 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		F59FDABD2BFD9DEB00136077 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		F59FDABF2BFDCDB800136077 /* SimpleWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleWebView.swift; sourceTree = "<group>"; };
+		F5A833042C1E2DD500BDDFF0 /* CookieManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookieManager.swift; sourceTree = "<group>"; };
+		F5A833062C1E2E6D00BDDFF0 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +75,8 @@
 				F59FDAAA2BFD97DE00136077 /* PollistApp.swift */,
 				F59FDAAC2BFD97DE00136077 /* ContentView.swift */,
 				F59FDABD2BFD9DEB00136077 /* WebView.swift */,
+				F5A833062C1E2E6D00BDDFF0 /* Coordinator.swift */,
+				F5A833042C1E2DD500BDDFF0 /* CookieManager.swift */,
 				F59FDABF2BFDCDB800136077 /* SimpleWebView.swift */,
 				F5858F282C05140600120668 /* Constants.swift */,
 				F59FDAAE2BFD97DF00136077 /* Assets.xcassets */,
@@ -167,10 +173,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				F5858F292C05140600120668 /* Constants.swift in Sources */,
+				F5A833052C1E2DD500BDDFF0 /* CookieManager.swift in Sources */,
 				F59FDABE2BFD9DEB00136077 /* WebView.swift in Sources */,
 				F59FDAC02BFDCDB800136077 /* SimpleWebView.swift in Sources */,
 				F59FDAAD2BFD97DE00136077 /* ContentView.swift in Sources */,
 				F59FDAAB2BFD97DE00136077 /* PollistApp.swift in Sources */,
+				F5A833072C1E2E6D00BDDFF0 /* Coordinator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -303,7 +311,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = pollist/pollist.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"pollist/Preview Content\"";
 				DEVELOPMENT_TEAM = MBM3VV5JVW;
 				ENABLE_PREVIEWS = YES;
@@ -341,7 +349,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = pollist/pollist.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"pollist/Preview Content\"";
 				DEVELOPMENT_TEAM = MBM3VV5JVW;
 				ENABLE_PREVIEWS = YES;

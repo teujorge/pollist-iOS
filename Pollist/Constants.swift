@@ -10,6 +10,9 @@ import Foundation
 // App Store subscription group ID
 let subGroupID = "21491427"
 
+// Website Domain
+let webDomain = "pollist.org" // pollist-git-dev-mrljorge.vercel.app"
+
 // API key for Next.js /api server authentication
 let apiKey = ""
 

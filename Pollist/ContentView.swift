@@ -12,12 +12,14 @@ import Foundation
 
 struct ContentView: View {
     
+    @ObservedObject var webViewManager = WebViewManager.shared
+    
     @State private var hasWebViewLoaded = false
     @State private var activeSheet: ActiveSheet?
     @State private var autoShowSubsSheetFromWebViewInSheet = false
     
     enum ActiveSheet: Identifiable {
-        case subscription, simpleWebView
+        case subscription, authWebView, simpleWebView
         var id: Int {
             hashValue
         }
@@ -29,7 +31,7 @@ struct ContentView: View {
         ZStack(alignment: .center) {
             // WebView
             WebView(
-                url: WebViewManager.shared.webViewURL,
+                url: webViewManager.webViewURL,
                 markWebViewAsLoaded: markWebViewAsLoaded,
                 openWebViewInSheet: openWebViewInSheet,
                 openSubscriptionSheet: openSubscriptionSheet,
@@ -88,7 +90,7 @@ struct ContentView: View {
                             Button("Terms of Service") {
                                 DispatchQueue.main.async {
                                     autoShowSubsSheetFromWebViewInSheet = true
-                                    WebViewManager.shared.webViewSheetURL = URL(string: "https://pollist.org/tos")!
+                                    WebViewManager.shared.webViewSheetURL = URL(string: "https://\(webDomain)/tos")!
                                     activeSheet = .simpleWebView
                                 }
                             }
@@ -104,7 +106,7 @@ struct ContentView: View {
                             Button("Privacy Policy") {
                                 DispatchQueue.main.async {
                                     autoShowSubsSheetFromWebViewInSheet = true
-                                    WebViewManager.shared.webViewSheetURL = URL(string: "https://pollist.org/privacy")!
+                                    WebViewManager.shared.webViewSheetURL = URL(string: "https://\(webDomain)/privacy")!
                                     activeSheet = .simpleWebView
                                 }
                             }
@@ -118,14 +120,44 @@ struct ContentView: View {
                 .storeButton(.visible, for: .restorePurchases)
                 .subscriptionStoreControlStyle(.prominentPicker)
                 .subscriptionStorePickerItemBackground(.ultraThinMaterial)
+            case .authWebView:
+                VStack {
+                    // Draggable indicator
+                     RoundedRectangle(cornerRadius: 3)
+                         .frame(width: 40, height: 6)
+                         .foregroundColor(.gray)
+                         .opacity(0.5)
+                         .padding(.top, 12)
+                         .padding(.bottom, 4)
+                    
+                    // Content
+                    WebView(
+                        url: WebViewManager.shared.webViewSheetURL,
+                        markWebViewAsLoaded: markWebViewAsLoaded,
+                        openWebViewInSheet: openWebViewInSheet,
+                        openSubscriptionSheet: openSubscriptionSheet,
+                        openManageSubscriptions: openManageSubscriptions
+                    )
+                }
             case .simpleWebView:
-                WebView(
-                    url: WebViewManager.shared.webViewSheetURL,
-                    markWebViewAsLoaded: markWebViewAsLoaded,
-                    openWebViewInSheet: openWebViewInSheet,
-                    openSubscriptionSheet: openSubscriptionSheet,
-                    openManageSubscriptions: openManageSubscriptions
-                )
+                VStack {
+                    // Draggable indicator
+                     RoundedRectangle(cornerRadius: 3)
+                         .frame(width: 40, height: 6)
+                         .foregroundColor(.gray)
+                         .opacity(0.5)
+                         .padding(.top, 12)
+                         .padding(.bottom, 4)
+                    
+                    // Content
+                    WebView(
+                        url: WebViewManager.shared.webViewSheetURL,
+                        markWebViewAsLoaded: markWebViewAsLoaded,
+                        openWebViewInSheet: openWebViewInSheet,
+                        openSubscriptionSheet: openSubscriptionSheet,
+                        openManageSubscriptions: openManageSubscriptions
+                    )
+                }
             }
         }
         // MARK: SwiftUI App Store APIs
@@ -203,19 +235,21 @@ struct ContentView: View {
         NotificationCenter.default.addObserver(forName: NSNotification.Name("UserDeniedNotifications"), object: nil, queue: .main) { _ in
             self.loadWebViewContent()
         }
-        NotificationCenter.default.addObserver(forName: NSNotification.Name("UniversalLinkReceived"), object: nil, queue: .main) { _ in
+        NotificationCenter.default.addObserver(forName: NSNotification.Name("DeepLinkReceived"), object: nil, queue: .main) { _ in
             self.loadWebViewContent()
         }
     }
     
     private func loadWebViewContent() {
         
-        if hasWebViewLoaded && WebViewManager.shared.universalURL == nil {
+        print("loadWebViewContent")
+        
+        if hasWebViewLoaded && WebViewManager.shared.deepLinkURL == nil {
             print("Webview already loaded")
             return
         }
         
-        var urlComponents = URLComponents(url: WebViewManager.shared.universalURL ?? WebViewManager.shared.webViewURL, resolvingAgainstBaseURL: false)
+        var urlComponents = URLComponents(url: WebViewManager.shared.deepLinkURL ?? WebViewManager.shared.webViewURL, resolvingAgainstBaseURL: false)
         
         let currentQueryItems = urlComponents?.queryItems ?? []
         
@@ -238,7 +272,7 @@ struct ContentView: View {
     
     private func postSubscriptionStatuses(_ payloads: [AppStorePayload]) async {
         
-        print("post request -> https://pollist.org/api/subscription/device")
+        print("post request -> https://\(webDomain)/api/subscription/device")
         payloads.forEach { payload in
             print("Product ID: \(payload.productID)")
             print("Original Transaction ID: \(payload.originalID)")
@@ -246,7 +280,7 @@ struct ContentView: View {
         }
         
         // Ensure valid URL
-        guard let url = URL(string: "https://pollist.org/api/subscription/device") else {
+        guard let url = URL(string: "https://\(webDomain)/api/subscription/device") else {
             print("Invalid URL")
             return
         }
@@ -392,7 +426,7 @@ struct ContentView: View {
     private func markWebViewAsLoaded() {
         DispatchQueue.main.async {
             withAnimation { hasWebViewLoaded = true }
-            WebViewManager.shared.universalURL = nil
+            WebViewManager.shared.deepLinkURL = nil
         }
     }
     

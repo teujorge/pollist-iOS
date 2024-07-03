@@ -9,7 +9,7 @@ import SwiftUI
 import WebKit
 
 struct WebView: UIViewRepresentable {
-    
+
     let url: URL
     let markWebViewAsLoaded: () -> Void
     let openWebViewInSheet: (URL) -> Void
@@ -23,6 +23,9 @@ struct WebView: UIViewRepresentable {
         
         userContentController.add(context.coordinator, name: "userListener")
         config.userContentController = userContentController
+        
+        // Use the default data store to share cookies
+        config.websiteDataStore = .default()
         
         let webView = WKWebView(frame: .zero, configuration: config)
         
@@ -50,36 +53,23 @@ struct WebView: UIViewRepresentable {
         
         context.coordinator.webView = webView
         
+        // Synchronize cookies from shared storage to WKWebView
+        CookieManager.shared.synchronizeCookies(to: webView) {
+            let request = URLRequest(url: self.url)
+            webView.load(request)
+        }
+        
         return webView
     }
     
     func updateUIView(_ uiView: WKWebView, context: Context) {
         DispatchQueue.main.async {
-            let request = URLRequest(url: url)
+            let request = URLRequest(url: self.url)
             uiView.load(request)
         }
     }
     
-    private func cleanWebViewData() {
-        let websiteDataTypes = Set([WKWebsiteDataTypeCookies])
-        let dataStore = WKWebsiteDataStore.default()
-        
-        dataStore.fetchDataRecords(ofTypes: websiteDataTypes) { records in
-            // Filter out cookies to delete (containing "google" but not "accounts.google.com")
-            let recordsToDelete = records.filter { record in
-                record.displayName.contains("google") && !record.displayName.contains("accounts.google.com")
-            }
-            
-            // Remove the filtered cookies
-            dataStore.removeData(ofTypes: websiteDataTypes, for: recordsToDelete) {
-                recordsToDelete.forEach { record in
-                    print("Cleared cookies for: \(record.displayName)")
-                }
-            }
-        }
-    }
-    
-    private func showAlertIfNeeded(completion: @escaping () -> Void) {
+    func showAlertIfNeeded(completion: @escaping () -> Void) {
         guard let userID = WebViewManager.shared.userID,
               let savedUserID = UserDefaults.standard.string(forKey: .subscribedUserID),
               userID != savedUserID else {
@@ -114,92 +104,4 @@ struct WebView: UIViewRepresentable {
         Coordinator(self)
     }
     
-    class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
-        
-        var parent: WebView
-        var webView: WKWebView?
-        var refreshControl: UIRefreshControl?
-        
-        init(_ parent: WebView) {
-            self.parent = parent
-        }
-        
-        // Handle webview navigation finish
-        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-            refreshControl?.endRefreshing()
-            parent.markWebViewAsLoaded()
-        }
-        
-        // Handle webview navigation links
-        func webView(_ webView: WKWebView,
-                     decidePolicyFor navigationAction: WKNavigationAction,
-                     decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-            
-            print("Handle navigation action")
-            
-            // Ensure that the URL is valid
-            guard let url = navigationAction.request.url,
-                  let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-                  let host = components.host else {
-                decisionHandler(.allow)
-                return
-            }
-            
-            // Ensure that there is no target frame (indicating it might be an internal link)
-            guard navigationAction.targetFrame == nil else {
-                decisionHandler(.allow)
-                return
-            }
-            
-            print("Host: \(host)")
-            
-            if host == "pollist.org" && components.queryItems?.contains(where: { $0.name == "target" && $0.value == "_blank" }) == true {
-                print("Open in default browser")
-                UIApplication.shared.open(url)
-            } else if host == "twitter.com" || host == "api.whatsapp.com" {
-                print("Open in default browser")
-                UIApplication.shared.open(url)
-            } else if host == "pollist.org" && url.path == "/subscribe" {
-                print("Open purchase subscription")
-                let userID = components.queryItems?.first(where: { $0.name == "client_reference_id" })?.value
-                let productID = components.queryItems?.first(where: { $0.name == "product_id" })?.value
-                print("User ID: \(userID ?? "nil")")
-                print("Product ID: \(productID ?? "nil")")
-                
-                if userID != nil && userID != WebViewManager.shared.userID {
-                    WebViewManager.shared.userID = userID
-                }
-                parent.showAlertIfNeeded() {
-                    self.parent.openSubscriptionSheet()
-                }
-            } else if host == "pollist.org" && url.path == "/subscription" {
-                print("Open manage subscription")
-                parent.showAlertIfNeeded() {
-                    self.parent.openManageSubscriptions()
-                }
-            } else {
-                print("Open link in bottom sheet")
-                parent.openWebViewInSheet(url)
-            }
-            
-            // Cancel the default handling of this URL to enforce our custom behavior
-            decisionHandler(.cancel)
-        }
-        
-        func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-            if message.name == "userListener", let messageBody = message.body as? String {
-                print("userListener message from web: \(messageBody)")
-                if messageBody.isEmpty {
-                    parent.cleanWebViewData()
-                    WebViewManager.shared.userID = nil
-                } else {
-                    WebViewManager.shared.userID = messageBody
-                }
-            }
-        }
-        
-        @objc func refreshWebView() {
-            webView?.reload()
-        }
-    }
 }
